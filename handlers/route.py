@@ -19,22 +19,21 @@ def get_main_inline_keyboard():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="start", callback_data="btn_start"),
-                InlineKeyboardButton(text="help", callback_data="btn_help")
+                InlineKeyboardButton(text="🖱️start", callback_data="btn_start"),
+                InlineKeyboardButton(text="📞help", callback_data="btn_help")
             ],
             [
-                InlineKeyboardButton(text="open file", callback_data="btn_open_file"),
-                InlineKeyboardButton(text="my name", callback_data="btn_your_name")
+                InlineKeyboardButton(text="📁open file", callback_data="btn_open_file"),
             ],
             [
-                InlineKeyboardButton(text="shutdown", callback_data="btn_shutdown"),
-                InlineKeyboardButton(text="reboot", callback_data="btn_rebooting")
+                InlineKeyboardButton(text="🛑shutdown", callback_data="btn_shutdown"),
+                InlineKeyboardButton(text="⚙️reboot", callback_data="btn_rebooting")
             ],
             [
-                InlineKeyboardButton(text="screenshot", callback_data="btn_screenshot"),
+                InlineKeyboardButton(text="📷screenshot", callback_data="btn_screenshot"),
             ],
             [
-                InlineKeyboardButton(text="git of author", url="https://github.com/DChris19")
+                InlineKeyboardButton(text="💻git of author", url="https://github.com/DChris19")
             ]
         ]
     )
@@ -45,7 +44,8 @@ def get_main_inline_keyboard():
 @router.message(Command("start"))
 @router.message(F.text.lower() == "start")
 async def cmd_start(message: Message):
-    await message.answer("Hello honey\n\n /help", reply_markup=get_main_inline_keyboard())
+    name = message.from_user.first_name if message.from_user else "honey"
+    await message.answer(f"Hello honey {name}♥️", reply_markup=get_main_inline_keyboard())
 
 
 @router.message(Command("help"))
@@ -55,6 +55,21 @@ async def cmd_help(message: Message):
 
 
 # callbacks
+@router.callback_query(F.data == "btn_start")
+async def cb_start(callback: CallbackQuery):
+    if callback.message:
+        name = callback.from_user.first_name if callback.from_user else "honey"
+        await callback.message.answer(f"Hello honey {name}♥️", reply_markup=get_main_inline_keyboard())
+    await callback.answer()
+
+
+@router.callback_query(F.data == "btn_help")
+async def cb_help(callback: CallbackQuery):
+    if callback.message:
+        await callback.message.answer("commands list", reply_markup=get_main_inline_keyboard())
+    await callback.answer()
+
+
 @router.callback_query(F.data == "btn_open_file")
 async def ask_filename(callback: CallbackQuery, state: FSMContext):
     if callback.message:

@@ -11,7 +11,14 @@ from handlers.route import router
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN") or ""
+
+# Two separate env vars — leave SECOND_TELEGRAM_ID empty/unset if there's
+# only one user.
 MY_ID = int(os.getenv("MY_TELEGRAM_ID") or "0")
+SECOND_ID_RAW = os.getenv("SECOND_TELEGRAM_ID") or ""
+ALLOWED_IDS = {MY_ID}
+if SECOND_ID_RAW.strip():
+    ALLOWED_IDS.add(int(SECOND_ID_RAW))
 
 
 class AccessMiddleware(BaseMiddleware):
@@ -22,7 +29,7 @@ class AccessMiddleware(BaseMiddleware):
         data: dict
     ) -> Any:
         user = data.get("event_from_user")
-        if user and user.id != MY_ID:
+        if user and user.id not in ALLOWED_IDS:
             return
         return await handler(event, data)
 
@@ -33,6 +40,8 @@ dp.include_router(router)
 
 
 async def main():
+    if MY_ID == 0:
+        print("Warning: MY_TELEGRAM_ID is not set — no one will be able to use the bot.")
     bot = Bot(token=TOKEN)
     print("Start...")
     await dp.start_polling(bot)

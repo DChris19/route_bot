@@ -2,10 +2,6 @@ import os
 import subprocess
 from io import BytesIO
 
-import os
-import subprocess
-from io import BytesIO
-
 # Folders to search for files (add your own)
 
 SEARCH_DIRS = [
