@@ -19,21 +19,21 @@ def get_main_inline_keyboard():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🖱️start", callback_data="btn_start"),
-                InlineKeyboardButton(text="📞help", callback_data="btn_help")
+                InlineKeyboardButton(text="start", callback_data="btn_start"),
+                InlineKeyboardButton(text="help", callback_data="btn_help")
             ],
             [
-                InlineKeyboardButton(text="📁open file", callback_data="btn_open_file"),
+                InlineKeyboardButton(text="open file", callback_data="btn_open_file"),
             ],
             [
-                InlineKeyboardButton(text="🛑shutdown", callback_data="btn_shutdown"),
-                InlineKeyboardButton(text="⚙️reboot", callback_data="btn_rebooting")
+                InlineKeyboardButton(text="shutdown", callback_data="btn_shutdown"),
+                InlineKeyboardButton(text="reboot", callback_data="btn_rebooting")
             ],
             [
-                InlineKeyboardButton(text="📷screenshot", callback_data="btn_screenshot"),
+                InlineKeyboardButton(text="screenshot", callback_data="btn_screenshot"),
             ],
             [
-                InlineKeyboardButton(text="💻git of author", url="https://github.com/DChris19")
+                InlineKeyboardButton(text="git of author", url="https://github.com/DChris19")
             ]
         ]
     )

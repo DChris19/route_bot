@@ -1,18 +1,20 @@
-# 🤖 Route Bot
+# Route Bot
 
 A Telegram bot for controlling your PC remotely — open files, launch programs, and more, all from your phone.
 
 ---
 
-## ✨ Features
+## Features
 
-- 📂 Open any file or program by name — no need to type the full path
-- 🔒 Access restricted to your Telegram account only
-- 🪟 Windows support
+- Open any file or program by name — no need to type the full path
+- Take a screenshot of your PC and get it sent straight to the chat
+- Shutdown / reboot your PC remotely
+- Access restricted to your Telegram account only
+- Windows support
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repository
 ```bash
@@ -42,7 +44,9 @@ Fill in `.env`:
 ```
 BOT_TOKEN=your_bot_token_from_botfather
 MY_TELEGRAM_ID=your_telegram_id
+SECOND_TELEGRAM_ID=second_person_telegram_id
 ```
+`SECOND_TELEGRAM_ID` is optional — leave it empty or remove the line if only one person will use the bot.
 
 ### 6. Add your game/program folders
 Open `handlers/pc_commands.py` and add your folders to `SEARCH_DIRS`:
@@ -50,6 +54,9 @@ Open `handlers/pc_commands.py` and add your folders to `SEARCH_DIRS`:
 SEARCH_DIRS = [
     os.path.expanduser("~\\Desktop"),
     os.path.expanduser("~\\Downloads"),
+    os.path.expanduser("~\\Documents"),
+    "C:\\Program Files",
+    "C:\\Program Files (x86)",
     r"D:\cteam\steamapps\common",  # your Steam folder
     # add more folders here
 ]
@@ -64,7 +71,7 @@ The bot will run as long as your PC is on and the script is running.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 route_bot/
@@ -79,22 +86,24 @@ route_bot/
 
 ---
 
-## 🔐 Security
+## Security
 
-- The bot only responds to the Telegram account with the ID specified in `MY_TELEGRAM_ID`
+- The bot only responds to Telegram accounts with an ID matching `MY_TELEGRAM_ID` or the optional `SECOND_TELEGRAM_ID`
 - Your `.env` file is excluded from Git via `.gitignore`
 - Each user creates their own bot token — no shared access
 
 ---
 
-## 📦 Requirements
+## Requirements
 
 - Python 3.10+
 - Windows OS
 - Telegram account
 
+The screenshot feature uses [Pillow](https://pypi.org/project/Pillow/), which is included in `requirements.txt`.
+
 ---
 
-## 👤 Author
+## Author
 
 [@DChris19](https://github.com/DChris19)
