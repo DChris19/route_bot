@@ -10,7 +10,7 @@ A Telegram bot for controlling your PC remotely — open files, launch programs,
 - Take a screenshot of your PC and get it sent straight to the chat
 - Shutdown / reboot your PC remotely
 - Access restricted to your Telegram account only
-- Windows support
+- Windows and Linux support
 
 ---
 
@@ -22,21 +22,37 @@ git clone https://github.com/DChris19/route_bot.git
 cd route_bot
 ```
 
-### 2. Install dependencies
+### 2. Pick your OS and delete the other file
+
+The `handlers/` folder ships with **two** PC-control files:
+
+- `pc_commands_windows.py`
+- `pc_commands_linux.py`
+
+**Delete whichever one doesn't match your OS.** `route.py` auto-detects which file is present and imports from it — it tries the Windows file first, falls back to the Linux file if that one's missing, and only raises an error if you accidentally deleted (or never had) both.
+
+| Your OS | Keep | Delete |
+|---|---|---|
+| Windows | `pc_commands_windows.py` | `pc_commands_linux.py` |
+| Linux | `pc_commands_linux.py` | `pc_commands_windows.py` |
+
+You don't *have* to delete the other one — the bot works fine either way since only one gets imported — but removing it keeps the folder clean and avoids confusion later.
+
+### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Create your bot
+### 4. Create your bot
 - Open Telegram and message [@BotFather](https://t.me/BotFather)
 - Send `/newbot` and follow the instructions
 - Copy the bot token
 
-### 4. Get your Telegram ID
+### 5. Get your Telegram ID
 - Message [@userinfobot](https://t.me/userinfobot)
 - Copy the numeric ID
 
-### 5. Configure environment
+### 6. Configure environment
 ```bash
 cp .env.example .env
 ```
@@ -48,8 +64,11 @@ SECOND_TELEGRAM_ID=second_person_telegram_id
 ```
 `SECOND_TELEGRAM_ID` is optional — leave it empty or remove the line if only one person will use the bot.
 
-### 6. Add your game/program folders
-Open `handlers/pc_commands.py` and add your folders to `SEARCH_DIRS`:
+### 7. Add your game/program folders
+
+Open whichever `pc_commands_*.py` file you kept and add your folders to `SEARCH_DIRS`.
+
+**Windows** (`pc_commands_windows.py`):
 ```python
 SEARCH_DIRS = [
     os.path.expanduser("~\\Desktop"),
@@ -62,7 +81,20 @@ SEARCH_DIRS = [
 ]
 ```
 
-### 7. Run the bot
+**Linux** (`pc_commands_linux.py`):
+```python
+SEARCH_DIRS = [
+    os.path.expanduser("~/Desktop"),
+    os.path.expanduser("~/Downloads"),
+    os.path.expanduser("~/Documents"),
+    "/usr/share/applications",
+    "/opt",
+    os.path.expanduser("~/.steam/steam/steamapps/common"),  # your Steam folder
+    # add more folders here
+]
+```
+
+### 8. Run the bot
 ```bash
 python main.py
 ```
@@ -76,13 +108,23 @@ The bot will run as long as your PC is on and the script is running.
 ```
 route_bot/
 ├── handlers/
-│   ├── pc_commands.py   # PC control functions
-│   └── route.py         # Bot handlers and FSM
+│   ├── pc_commands_windows.py   # PC control functions — Windows only
+│   ├── pc_commands_linux.py     # PC control functions — Linux only
+│   └── route.py                 # Bot handlers and FSM (auto-picks whichever file above is present)
 ├── .env                 # Your secrets (not on GitHub)
 ├── .env.example         # Template for .env
 ├── main.py              # Entry point
 └── requirements.txt     # Dependencies
 ```
+
+---
+
+## Platform Notes
+
+- **File opening**: Windows uses `os.startfile`, Linux uses `xdg-open`.
+- **Shutdown / reboot**: Windows uses the built-in `shutdown` command, no elevated rights needed by default. On Linux, `shutdown -h +0` / `shutdown -r +0` typically require root or a configured polkit rule — without that, the command will silently fail to actually power off the machine, though the bot will still report success.
+- **Screenshot**: uses [Pillow](https://pypi.org/project/Pillow/)'s `ImageGrab`, which only works on X11. On Wayland sessions (default on most modern Linux distros, e.g. GNOME/KDE by default), screenshot capture will fail and the bot will report an error instead of crashing.
+- **Missing both files**: if you delete (or rename) both `pc_commands_windows.py` and `pc_commands_linux.py`, the bot will fail to start and print a clear error telling you to restore one of them — it won't crash mid-conversation.
 
 ---
 
@@ -97,7 +139,7 @@ route_bot/
 ## Requirements
 
 - Python 3.10+
-- Windows OS
+- Windows or Linux (X11 session recommended for screenshots)
 - Telegram account
 
 The screenshot feature uses [Pillow](https://pypi.org/project/Pillow/), which is included in `requirements.txt`.

@@ -5,7 +5,16 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, BufferedInputFile
-from handlers.pc_commands import open_file, shutdown, rebooting, take_screenshot
+try:
+    from handlers.pc_commands_windows import open_file, shutdown, rebooting, take_screenshot
+except ModuleNotFoundError:
+    try:
+        from handlers.pc_commands_linux import open_file, shutdown, rebooting, take_screenshot
+    except ModuleNotFoundError as exc:
+        raise ModuleNotFoundError(
+            "Neither handlers/pc_commands_windows.py nor handlers/pc_commands_linux.py "
+            "was found. Keep the one matching your OS and delete the other — see README.md."
+        ) from exc
 
 
 class FileStates(StatesGroup):
