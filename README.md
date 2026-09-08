@@ -22,21 +22,21 @@ git clone https://github.com/DChris19/route_bot.git
 cd route_bot
 ```
 
-### 2. Pick your OS and delete the other file
+### 2. Pick your OS
 
-The `handlers/` folder ships with **two** PC-control files:
+The `handlers/` folder ships with PC-control files split by platform:
 
 - `pc_commands_windows.py`
-- `pc_commands_linux.py`
+- `pc_commands_linux.py` — **currently removed from the repo, work in progress. Linux support is temporarily unavailable until this is fixed.**
 
-**Delete whichever one doesn't match your OS.** `route.py` auto-detects which file is present and imports from it — it tries the Windows file first, falls back to the Linux file if that one's missing, and only raises an error if you accidentally deleted (or never had) both.
+`route.py` auto-detects which file is present and imports from it — it tries the Windows file first, falls back to the Linux file if that one's missing, and only raises an error if neither is present.
 
-| Your OS | Keep | Delete |
-|---|---|---|
-| Windows | `pc_commands_windows.py` | `pc_commands_linux.py` |
-| Linux | `pc_commands_linux.py` | `pc_commands_windows.py` |
+| Your OS | Status |
+|---|---|
+| Windows | Supported — `pc_commands_windows.py` is used automatically |
+| Linux | Not currently supported — `pc_commands_linux.py` was removed while a bug is being fixed |
 
-You don't *have* to delete the other one — the bot works fine either way since only one gets imported — but removing it keeps the folder clean and avoids confusion later.
+If you're on Windows, no action needed — just keep `pc_commands_windows.py` in place. If you're on Linux, hold off until `pc_commands_linux.py` is restored in a future commit.
 
 ### 3. Install dependencies
 ```bash
@@ -109,7 +109,7 @@ The bot will run as long as your PC is on and the script is running.
 route_bot/
 ├── handlers/
 │   ├── pc_commands_windows.py   # PC control functions — Windows only
-│   ├── pc_commands_linux.py     # PC control functions — Linux only
+│   ├── pc_commands_linux.py     # PC control functions — Linux only (temporarily removed, WIP)
 │   └── route.py                 # Bot handlers and FSM (auto-picks whichever file above is present)
 ├── .env                 # Your secrets (not on GitHub)
 ├── .env.example         # Template for .env
@@ -125,6 +125,7 @@ route_bot/
 - **Shutdown / reboot**: Windows uses the built-in `shutdown` command, no elevated rights needed by default. On Linux, `shutdown -h +0` / `shutdown -r +0` typically require root or a configured polkit rule — without that, the command will silently fail to actually power off the machine, though the bot will still report success.
 - **Screenshot**: uses [Pillow](https://pypi.org/project/Pillow/)'s `ImageGrab`, which only works on X11. On Wayland sessions (default on most modern Linux distros, e.g. GNOME/KDE by default), screenshot capture will fail and the bot will report an error instead of crashing.
 - **Missing both files**: if you delete (or rename) both `pc_commands_windows.py` and `pc_commands_linux.py`, the bot will fail to start and print a clear error telling you to restore one of them — it won't crash mid-conversation.
+- **Linux status**: `pc_commands_linux.py` is currently removed from the repo while a bug is being fixed. Windows users are unaffected.
 
 ---
 
